@@ -1,3 +1,10 @@
+[![image](https://travis-ci.org/perewall/snaut.svg?branch=master)](https://travis-ci.org/perewall/snaut)
+[![image](https://codecov.io/gh/perewall/snaut/branch/master/graph/badge.svg)](https://codecov.io/gh/perewall/snaut)
+[![image](https://img.shields.io/pypi/pyversions/snaut.svg)](https://pypi.org/project/snaut/)
+[![image](https://img.shields.io/pypi/l/snaut.svg)](https://pypi.org/project/snaut/)
+[![image](https://img.shields.io/pypi/v/snaut.svg)](https://pypi.org/project/snaut/)
+
+
 # Snaut
 Artifact upload tool for Sonatype Nexus 3
 
