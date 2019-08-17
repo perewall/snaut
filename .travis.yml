@@ -1,0 +1,44 @@
+language: python
+
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  - 3.7
+
+cache: pip
+
+git:
+  depth: 5
+  quiet: true
+  submodules: false
+
+stages:
+  - test
+  - name: deploy
+    if: tag IS present
+
+install:
+  - pip install codecov twine -r requirements.txt
+
+script:
+  - coverage erase
+  - coverage run tests.py
+
+after_success:
+  - codecov
+
+jobs:
+  include:
+    - stage: deploy
+      python: 2.7
+      script:
+        - python setup.py bdist_wheel
+        - twine check dist/*
+        - twine upload --skip-existing dist/*
+    - python: 3.7
+      script:
+        - python setup.py sdist bdist_wheel
+        - twine check dist/*
+        - twine upload --skip-existing dist/*
