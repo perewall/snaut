@@ -33,7 +33,7 @@ def upload(asset, repo, username, password, verbose, no_verify, timeout, file):
         raise ClickException('Repository address is not provided')
 
     if asset not in ASSETS:
-        message = 'Unknown asset type "{0}", supported types - {0}'
+        message = 'Unknown asset type "{0}", supported types - {1}'
         raise ClickException(message.format(asset, ', '.join(ASSETS)))
 
     credentials = None  # optional
