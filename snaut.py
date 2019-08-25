@@ -17,12 +17,16 @@ ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
 
 
 @command(context_settings=dict(auto_envvar_prefix='SNAUT'))
-@option('-r', '--repo', help='Full URL, e.g. http://host/service/rest/v1/...')
-@option('-a', '--asset', help='Artifact type - {0}'.format(', '.join(ASSETS)))
-@option('-u', '--username', help='Username')
-@option('-p', '--password', help='Password')
+@option('-r', '--repo', required=True,
+        help='Full componens API URL with repository, e.g. '
+        'http(s)://.../components?repository=myrepo')
+@option('-a', '--asset', required=True,
+        help='Artifact type - {0}'.format(', '.join(ASSETS)))
+@option('-u', '--username', help='Username [optional]')
+@option('-p', '--password', help='Password [optional]')
 @option('-v', '--verbose', is_flag=True, help='Verbose output')
-@option('--timeout', default=10, type=int, help='Request timeout, default=10s')
+@option('--timeout', type=int, default=10,
+        show_default=True, help='Request timeout (sec)')
 @option('--no-verify', is_flag=True, help='Ignore SSL verify error')
 @argument('files', nargs=-1, type=File('rb'), required=True)
 @version_option(__version__)
@@ -31,15 +35,12 @@ def upload(
         verbose, timeout, no_verify, files):
     """Artifact upload tool for Sonatype Nexus 3"""
 
-    if not repo:
-        raise ClickException('Repository address is not provided')
-
     if asset not in ASSETS:
         message = 'Unknown asset type "{0}", supported types - {1}'
         raise ClickException(message.format(asset, ', '.join(ASSETS)))
 
     credentials = None  # optional
-    if all((username, password)):
+    if username and password:
         credentials = HTTPBasicAuth(username, password)
 
     if no_verify:
@@ -69,5 +70,5 @@ def upload(
         raise ClickException('One or more files failed to upload')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     upload()
