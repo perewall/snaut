@@ -24,9 +24,11 @@ ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
 @option('-v', '--verbose', is_flag=True, help='Verbose output')
 @option('--timeout', default=10, type=int, help='Request timeout, default=10s')
 @option('--no-verify', is_flag=True, help='Ignore SSL verify error')
-@argument('file', nargs=1, type=File('rb'))
+@argument('files', nargs=-1, type=File('rb'), required=True)
 @version_option(__version__)
-def upload(asset, repo, username, password, verbose, no_verify, timeout, file):
+def upload(
+        asset, repo, username, password,
+        verbose, timeout, no_verify, files):
     """Artifact upload tool for Sonatype Nexus 3"""
 
     if not repo:
@@ -43,21 +45,28 @@ def upload(asset, repo, username, password, verbose, no_verify, timeout, file):
     if no_verify:
         disable_warnings(category=InsecureRequestWarning)
 
-    try:
-        response = post(
-            url=repo, auth=credentials, verify=(not no_verify),
-            files={'{0}.asset'.format(asset): file}, timeout=timeout)
-        response.raise_for_status()
-    except HTTPError as e:
-        if verbose:
-            echo(e.response.text)
-        raise ClickException('{0} - {1}'.format(file.name, e))
-    except Exception as e:
-        raise ClickException('{0} - upload failed, {1}'.format(file.name, e))
-    else:
-        if verbose:
-            echo(response.text)
-        echo('{0}: upload success'.format(file.name))
+    failed = False
+    for file in files:
+        echo('uploading {0}: '.format(file.name), nl=False)
+        try:
+            response = post(
+                url=repo, auth=credentials, verify=(not no_verify),
+                files={'{0}.asset'.format(asset): file}, timeout=timeout)
+            response.raise_for_status()
+        except HTTPError as e:
+            failed = True
+            echo('failed')
+            echo('code: {0}, response: {1}\n'.format(
+                e.response.status_code, e.response.text), err=True)
+        except Exception as e:
+            failed = True
+            echo('failed')
+            echo('{0}\n'.format(e), err=True)
+        else:
+            echo('success')
+
+    if failed:
+        raise ClickException('One or more files failed to upload')
 
 
 if __name__ == '__main__':
