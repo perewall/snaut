@@ -33,8 +33,8 @@ Environment variables can be useful in your CI/CD pipeline:
 
 Example:
 ```
-python setup.py bdist_wheel
-snaut dist/mypackage.whl
+python setup.py sdist bdist_wheel
+snaut dist/*
 ```
 
 
