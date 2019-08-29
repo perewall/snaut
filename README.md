@@ -12,6 +12,8 @@ Alternative to `curl -X POST -u user:pwd -F "pypi.asset=@mypackage.whl" ...`
 
 Supported asset types: `pypi`, `rubygems`, `nuget`, `npm`
 
+See [API docs](https://help.sonatype.com/repomanager3/rest-and-integration-api/components-api#ComponentsAPI-UploadComponent)
+
 
 ## Installation
 `pip install snaut`
@@ -25,6 +27,7 @@ Supported asset types: `pypi`, `rubygems`, `nuget`, `npm`
 Environment variables can be useful in your CI/CD pipeline:
 - SNAUT_REPO
 - SNAUT_ASSET
+- SNAUT_DIRECTORY
 - SNAUT_USERNAME
 - SNAUT_PASSWORD
 - SNAUT_VERBOSE
@@ -35,6 +38,11 @@ Example:
 ```
 python setup.py sdist bdist_wheel
 snaut dist/*
+```
+RAW asset type:
+```
+snaut -d /mypath dist/*
+snaut -d / myfile.zip
 ```
 
 
