@@ -12,7 +12,7 @@ from requests.packages.urllib3 import disable_warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 
 ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
