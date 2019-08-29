@@ -28,6 +28,7 @@ setup(
     setup_requires=['wheel', 'setuptools >=40'],
     tests_require=['responses >=0.10, <1.0'],
     entry_points={'console_scripts': ['snaut = snaut:upload']},
+    options={'bdist_wheel': {'universal': True}},
     py_modules=['snaut'],
     classifiers=[
         'Development Status :: 4 - Beta',
