@@ -24,7 +24,7 @@ See [API docs](https://help.sonatype.com/repomanager3/rest-and-integration-api/c
 
 `snaut -r http://host/service/rest/v1/components?repository=myrepo -a pypi mypackage.whl`
 
-Environment variables can be useful in your CI/CD pipeline:
+Environment variables or `.env` file can be useful in your CI/CD pipeline:
 - SNAUT_REPO
 - SNAUT_ASSET
 - SNAUT_DIRECTORY
@@ -49,3 +49,4 @@ snaut -d / myfile.zip
 ### Requirements
 * [click](https://click.palletsprojects.com)
 * [requests2](https://2.python-requests.org)
+* [python-dotenv](https://github.com/theskumar/python-dotenv)

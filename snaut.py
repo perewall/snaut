@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from dotenv import load_dotenv
+
 from click import ClickException
 from click import command, option, argument, version_option, echo, File, Path
 
@@ -14,6 +16,9 @@ __version__ = '1.0.0'
 
 
 ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
+
+
+load_dotenv('.env')
 
 
 @command(context_settings=dict(auto_envvar_prefix='SNAUT'))

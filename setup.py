@@ -20,9 +20,13 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT',
     url='https://github.com/perewall/snaut',
-    install_requires=['click >=7.0, <8.0', 'requests >=2.0, <3.0'],
+    install_requires=[
+        'click >=7.0, <8.0',
+        'requests >=2.0, <3.0',
+        'python_dotenv >=0.10, <1.0'
+    ],
     setup_requires=['wheel', 'setuptools >=40'],
-    tests_require=['responses >=0.10, <2.0'],
+    tests_require=['responses >=0.10, <1.0'],
     entry_points={'console_scripts': ['snaut = snaut:upload']},
     py_modules=['snaut'],
     classifiers=[
