@@ -27,6 +27,9 @@ class SnautTest(TestCase):
 
     def test_upload_error(self):
         """Upload error"""
+        result = self.cli.invoke(upload, (self.args[0], '-r', self.args[-1]))
+        self.assertEqual(result.exit_code, 1)
+
         args = (self.args[0], '-r', self.args[-1], '-a', 'wrong')
         result = self.cli.invoke(upload, args)  # wrong asset type
         self.assertEqual(result.exit_code, 1)
@@ -48,6 +51,14 @@ class SnautTest(TestCase):
         """Upload success"""
         add('POST', self.args[-1])
         args = (self.args[0], '-r', self.args[-1], '-a', self.args[-3])
+        result = self.cli.invoke(upload, args)
+        self.assertEqual(result.exit_code, 0)
+
+    @activate
+    def test_raw_asset(self):
+        """Raw asset type"""
+        add('POST', self.args[-1])
+        args = list(self.args) + ['--directory', '/']
         result = self.cli.invoke(upload, args)
         self.assertEqual(result.exit_code, 0)
 

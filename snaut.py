@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from click import ClickException
-from click import command, option, argument, version_option, echo, File
+from click import command, option, argument, version_option, echo, File, Path
 
 from requests import post
 from requests.auth import HTTPBasicAuth
@@ -20,8 +20,10 @@ ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
 @option('-r', '--repo', required=True,
         help='Full componens API URL with repository, e.g. '
         'http(s)://.../components?repository=myrepo')
-@option('-a', '--asset', required=True,
-        help='Artifact type - {0}'.format(', '.join(ASSETS)))
+@option('-a', '--asset', help='Asset type - {0}'.format(','.join(ASSETS)))
+@option('-d', '--directory', type=Path(dir_okay=True, file_okay=False),
+        help='Upload directory for RAW asset type,'
+        ' argument of assert type will be ignored if this option is set')
 @option('-u', '--username', help='Username [optional]')
 @option('-p', '--password', help='Password [optional]')
 @option('-v', '--verbose', is_flag=True, help='Verbose output')
@@ -31,11 +33,17 @@ ASSETS = ('pypi', 'rubygems', 'nuget', 'npm')
 @argument('files', nargs=-1, type=File('rb'), required=True)
 @version_option(__version__)
 def upload(
-        asset, repo, username, password,
+        repo, asset, directory, username, password,
         verbose, timeout, no_verify, files):
     """Artifact upload tool for Sonatype Nexus 3"""
 
-    if asset not in ASSETS:
+    if directory:
+        if asset:
+            echo('WARNING: -d option is set, -a option will be ignored')
+        asset = 'raw'
+    elif not asset:
+        raise ClickException('Asset type must be provided')
+    elif asset.lower() not in ASSETS:
         message = 'Unknown asset type "{0}", supported types - {1}'
         raise ClickException(message.format(asset, ', '.join(ASSETS)))
 
@@ -46,13 +54,20 @@ def upload(
     if no_verify:
         disable_warnings(category=InsecureRequestWarning)
 
+    filename = '{0}.asset'.format(asset)
+    rw = None
     failed = False
     for file in files:
         echo('uploading {0}: '.format(file.name), nl=False)
+
+        if directory:
+            filename = 'raw.asset0'
+            rw = {'raw.directory': directory, 'raw.asset0.filename': file.name}
+
         try:
             response = post(
                 url=repo, auth=credentials, verify=(not no_verify),
-                files={'{0}.asset'.format(asset): file}, timeout=timeout)
+                data=rw, files={filename: file}, timeout=timeout)
             response.raise_for_status()
         except HTTPError as e:
             failed = True
